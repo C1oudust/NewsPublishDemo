@@ -298,5 +298,81 @@ namespace NewsPublish.Service
 
             return response;
         }
+
+        public ResponseModel SearchOneNews(Expression<Func<News, bool>> where)
+        {
+            var news = _db.News
+                .Where(where)
+                .FirstOrDefault();
+            if (news == null)
+            {
+                return new ResponseModel { code = 0, result = "search failed!" };
+            }
+            return new ResponseModel
+            {
+                code = 200,
+                result = "search success!",
+                data = news.Id
+            };
+        }
+
+        public ResponseModel GetNewsCount(Expression<Func<News, bool>> where)
+        {
+            var count = _db.News.Where(where).Count();
+            return new ResponseModel
+            {
+                code = 200,
+                result = "Get news count success!",
+                data = count
+            };
+
+        }
+
+        /// <summary>
+        /// 根据当然文章类型获取相关类型的文章以作推荐
+        /// </summary>
+        public ResponseModel GetRelevantNews(int id)
+        {
+            var news = _db.News.FirstOrDefault(c => c.Id == id);
+            if (news == null)
+            {
+                return new ResponseModel
+                {
+                    code = 0,
+                    result = "relevant inexistence!"
+                };
+            }
+
+            var newsList = _db.News
+                .Include("NewsComment")
+                .Where(c => c.NewsClassifyId == news.NewsClassifyId && c.Id != id)
+                .OrderByDescending(c => c.PublishDate)
+                .OrderByDescending(c => c.NewsComment.Count)
+                .Take(6)
+                .ToList();
+            var response = new ResponseModel
+            {
+                code = 200,
+                result = "Get News Comment success!",
+                data = new List<NewsModel>()
+            };
+            foreach (var n in newsList)
+            {
+                response.data.Add(new NewsModel
+                {
+                    Id = n.Id,
+                    PublishDate = Convert.ToDateTime(n.PublishDate).ToString("yyyy-MM-dd"),
+                    Title = n.Title,
+                    Contents = n.Contents.Length > 50 ? n.Contents.Substring(0, 50) : n.Contents,
+                    Image = n.Image,
+                    Remark = n.Remark,
+                    ClassifyName = n.NewsClassify.Name,
+                    CommentCount = n.NewsComment.Count()
+
+                });
+            }
+
+            return response;
+        }
     }
 }
