@@ -9,7 +9,7 @@ using NewsPublish.Model.Response;
 
 namespace NewsPublish.Service
 {
-    class NewsService
+    public class NewsService
     {
         private Db _db;
 
@@ -347,7 +347,7 @@ namespace NewsPublish.Service
                 .Include("NewsComment")
                 .Where(c => c.NewsClassifyId == news.NewsClassifyId && c.Id != id)
                 .OrderByDescending(c => c.PublishDate)
-                .OrderByDescending(c => c.NewsComment.Count)
+                .ThenByDescending(c => c.NewsComment.Count)
                 .Take(6)
                 .ToList();
             var response = new ResponseModel

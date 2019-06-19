@@ -9,7 +9,7 @@ using NewsPublish.Model.Response;
 
 namespace NewsPublish.Service
 {
-    class BannerService
+    public class BannerService
     {
         private Db _db;
 

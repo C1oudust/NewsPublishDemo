@@ -7,7 +7,7 @@ using NewsPublish.Model.Entity;
 using NewsPublish;
 namespace NewsPublish.Service
 {
-    class Db:DbContext
+    public class Db:DbContext
     {
         public Db() { }
         public virtual DbSet<Banner> Banner { get; set; }
