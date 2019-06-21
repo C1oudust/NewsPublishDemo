@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NewsPublish.Service;
 
 namespace NewsPublish
 {
@@ -31,6 +32,10 @@ namespace NewsPublish
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddTransient<BannerService>();
+            services.AddTransient<CommentService>();
+            services.AddTransient<NewsService>();
+            services.AddTransient<Db>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -54,6 +59,10 @@ namespace NewsPublish
 
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                    name: "areaRoute",
+                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                );
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
