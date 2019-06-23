@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
+using NewsPublish.Model.Entity;
+using NewsPublish.Model.Request;
+using NewsPublish.Model.Response;
 using NewsPublish.Service;
+
 
 namespace NewsPublish.Areas.Admin.Controllers
 {
@@ -12,10 +19,14 @@ namespace NewsPublish.Areas.Admin.Controllers
     public class BannerController : Controller
     {
         private BannerService _bannerService;
-        public BannerController(BannerService bannerService)
+        private IHostingEnvironment _host;
+
+        public BannerController(BannerService bannerService, IHostingEnvironment host)
         {
             _bannerService = bannerService;
+            _host = host;
         }
+
         // GET: Banner
         public ActionResult Index()
         {
@@ -23,79 +34,51 @@ namespace NewsPublish.Areas.Admin.Controllers
             return View(banner);
         }
 
-        // GET: Banner/Details/5
-        public ActionResult Details(int id)
+        public ActionResult BannerAdd()
         {
-            return View();
+            var banner = _bannerService.GetBannerList();
+            return View(banner);
         }
 
-        // GET: Banner/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Banner/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<JsonResult> AddBanner(AddBanner banner, IFormCollection collection)
         {
-            try
+            var files = collection.Files;
+            if (files.Count > 0)
             {
-                // TODO: Add insert logic here
+                string webRootPath = _host.WebRootPath;
+                string relativeDirPath = "\\BannerPic";
+                string absolutePath = webRootPath + relativeDirPath;
+                string[] fileType = new[] {".jpg", ".gif", ".jpeg", ".png", ".bmp"};
+                string extension = Path.GetExtension(files[0].FileName);
+                if (fileType.Contains(extension.ToLower()))
+                {
+                    if (!Directory.Exists(absolutePath))
+                    {
+                        Directory.CreateDirectory(absolutePath);
+                    }
+                    var fileName = DateTime.Now.ToString("yyyyMMMMddHHms") + extension;
+                    var filePath = absolutePath + "\\" + fileName;
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await files[0].CopyToAsync(stream);
+                    }
 
-                return RedirectToAction(nameof(Index));
+                    banner.Image = "/BannerPic/" + fileName;
+                    return Json(_bannerService.AddBanner(banner));
+                }
+                return Json(new ResponseModel { code = 0, result = "Image format error!"});
             }
-            catch
-            {
-                return View();
-            }
+            return Json(new ResponseModel { code = 0, result = "please upload image!"});
         }
 
-        // GET: Banner/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Banner/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public JsonResult DelBanner(int id)
         {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            //TODO:需要添加删除数据库记录的同时删除文件夹里的图片文件功能
+            if (id <= 0) return Json(new ResponseModel {code = 0, result = "parameter error"});
+            return Json(_bannerService.DeleteBanner(id));
         }
 
-        // GET: Banner/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Banner/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
