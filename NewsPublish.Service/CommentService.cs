@@ -59,7 +59,7 @@ namespace NewsPublish.Service
                 return new ResponseModel
                 {
                     code = 0,
-                    result = "Comment inexistence!"
+                    result = "Comment not exist!"
                 };
             }
 

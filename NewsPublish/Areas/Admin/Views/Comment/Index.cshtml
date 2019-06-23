@@ -1,8 +1,9 @@
 ﻿
 @{
-    ViewData["Title"] = "NewsClassify";
+    ViewData["Title"] = "Index";
 }
 @model NewsPublish.Model.Response.ResponseModel
+
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -22,43 +23,42 @@
     <!--[if IE 7]>
     <link href="/admin/font/font-awesome-ie7.min.css" rel="stylesheet" type="text/css" />
     <![endif]-->
-    <title>新闻类别管理</title>
+    <title>评论管理</title>
 </head>
 <body>
-    <nav class="Hui-breadcrumb"><i class="icon-home"></i> 首页 <span class="c-gray en">&gt;</span> 新闻中心 <span class="c-gray en">&gt;</span> 新闻类别 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="icon-refresh"></i></a></nav>
+    <nav class="Hui-breadcrumb"><i class="icon-home"></i> 首页 <span class="c-gray en">&gt;</span> 新闻中心 <span class="c-gray en">&gt;</span> 评论管理 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="icon-refresh"></i></a></nav>
     <div class="pd-20">
-        <div class="cl pd-5 bg-1 bk-gray mt-20">
-            <span class="l"><a href="javascript:;" onClick="user_add('550','300','添加新闻类别','/Admin/News/NewsClassifyAdd')" class="btn btn-primary radius"><i class="icon-plus"></i> 添加新闻类别</a></span>
-
-        </div>
 
         <table class="table table-border table-bordered table-hover table-bg table-sort">
             <thead>
                 <tr class="text-c">
                     <th width="80">ID</th>
-                    <th width="200">类别名称</th>
-                    <th width="90">排序</th>
-                    <th>备注</th>
-                    <th width="100">操作</th>
+                    <th width="400">新闻标题</th>
+                    <th>评论内容</th>
+                    <th width="130">添加时间</th>
+                    <th width="200">备注</th>
+                    <th width="60">操作</th>
                 </tr>
             </thead>
             <tbody>
-            @if (Model.code == 200)
+            @if(Model.code == 200)
             {
                 foreach (var m in Model.data)
                 {
                 <tr class="text-c">
                     <td>@m.Id</td>
-                    <td>@m.Name</td>
-                    <td>@m.Sort</td>
+                    <td>@m.NewsName</td>
+                    <td>@m.Contents</td>
+                    <td>@m.AddTime</td>
                     <td>@m.Remark</td>
-                    <td><a title="编辑" href="javascript:;" onClick="user_edit('4', '550', '300', '编辑', '/Admin/News/NewsClassifyEdit?id=@m.Id')" class="ml-5" style="text-decoration: none"><i class="icon-edit"></i></a></td>
+                    <td class="f-14"><a title="删除" href="javascript:;" onClick="del(this, @m.Id)" class="ml-5" style="text-decoration: none"><i class="icon-trash"></i></a></td>
                 </tr>
                 }
             }
             
             </tbody>
         </table>
+        <div id="pageNav" class="pageNav"></div>
     </div>
     <script type="text/javascript" src="/admin/js/jquery.min.js"></script>
     <script type="text/javascript" src="/admin/layer/layer.min.js"></script>
@@ -67,11 +67,30 @@
     <script type="text/javascript" src="/admin/plugin/My97DatePicker/WdatePicker.js"></script>
     <script type="text/javascript" src="/admin/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="/admin/js/H-ui.admin.js"></script>
-    <script type="text/javascript">
-        
+    <script>
+        function del(obj,id){
+	        window.layer.confirm('确认要删除吗？',function(index){
+                $.ajax({
+                    type: 'post',
+                    async: true,
+                    url: '/Admin/Comment/DelComment',
+                    data: {id:id},
+                    success: function(data) {
+                        if (data.code === 200) {
+                            window.layer.msg(data.result,1);
+                            reload();
+                        } else {
+                            window.layer.msg(data.result,1);
+                        }
+                    }
+                });
+	        });
+        }
+
         function reload() {
             location.replace(location.href);
         }
     </script>
 </body>
 </html>
+
