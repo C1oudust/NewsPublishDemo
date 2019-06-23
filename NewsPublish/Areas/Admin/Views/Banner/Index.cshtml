@@ -39,7 +39,7 @@
                     <th width="300">Banner图片</th>
                     <th width="300">跳转地址</th>
                     <th width="300">添加时间</th>
-                    <th>备注</th>
+                    <th width="300">备注</th>
                     <th width="60">操作</th>
                 </tr>
             </thead>
@@ -53,7 +53,8 @@
                     <td><image src="@m.Image" style="height: 100px; width: 200px" /></td>
                     <td><a href="@m.Url" target="_blank">"@m.Url"</a></td>
                     <td>@m.AddTime</td>
-                    <td class="text-l">@m.Remark</td>
+                    <td class="">@m.Remark</td> 
+                    @* <td class="text-l">@m.Remark</td>  文字左对齐*@
                     <td class="f-14"><a title="删除" href="javascript:;" onClick="del(this,@m.Id)" class="ml-5" style="text-decoration: none"><i class="icon-trash"></i></a></td>
                 </tr>
                 }

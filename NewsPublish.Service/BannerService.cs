@@ -45,6 +45,7 @@ namespace NewsPublish.Service
                 {
                     Id = banner.Id,
                     Image = banner.Image,
+                    Url = banner.Url,
                     AddTime = banner.AddTime,
                     Remark = banner.Remark
                 });
