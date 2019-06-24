@@ -80,6 +80,7 @@
         var currentPageCount = 0;
         var classifyId = 0;
         var keyword = "";
+        var lastPage = 1;
         window.onload = (function(){
             // optional set
             pageNav.pre="&lt;上一页";
@@ -117,8 +118,11 @@
                     var totalPage = parseInt(res.total / pageSize + 1);
                     // p,当前页码,pn，总页面
                     pageNav.fn = function(p,pn){
-                        $("#pageInfo").text("当前页:"+pageIndex+" 总页: "+totalPage);
-                        //alert("当前页:"+p+" 总页: "+pn);
+                        $("#pageInfo").text("当前页:"+p+" 总页: "+totalPage);
+                        //alert("当前页:"+p);
+                        if (p !== lastPage) {
+                            getNews(p, pageSize, classifyId, keyword);
+                        }
                     };
                     //重写分页状态,跳到下一页
                     pageNav.go(pageIndex, totalPage);
@@ -138,7 +142,7 @@
                             '</tr>';
                         $("#news_content").append(tr);
                     }
-                    
+                    lastPage = pageIndex;
                 }
             });
         }
