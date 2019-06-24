@@ -32,6 +32,11 @@ namespace NewsPublish.Controllers
             return View();
         }
 
+        [HttpGet]
+        public JsonResult GetBanner()
+        {
+            return Json(_bannerService.GetBannerList());
+        }
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
