@@ -110,10 +110,6 @@ namespace NewsPublish.Areas.Admin.Controllers
             return Json(_newsService.DeleteOneNews(id));
         }
         #region 新闻类别
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
         public ActionResult NewsClassify()
         {
