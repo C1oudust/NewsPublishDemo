@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NewsPublish.Models;
 using NewsPublish.Service;
+using Newtonsoft.Json.Schema;
 
 namespace NewsPublish.Controllers
 {
@@ -43,6 +44,12 @@ namespace NewsPublish.Controllers
         public JsonResult GetTotalNews()
         {
             return Json(_newsService.GetNewsCount(c => true));
+        }
+
+        [HttpGet]
+        public JsonResult GetHomeNews()
+        {
+            return Json(_newsService.GetNewsList(c => true, 5));
         }
         public IActionResult Contact()
         {
