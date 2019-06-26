@@ -146,7 +146,7 @@
 </div>
 <div class="widget widget_hot">
 	  <h3>最新评论文章</h3>
-      <ul>
+      <ul id="new_comment">
           <li>
               <a title="央企风电三大巨头联手打造东营海上风电装备制造基地" href="show.html">
                   <span class="thumbnail">
@@ -216,6 +216,7 @@
         getBanner();
         getTotalNews();
         getHomeNews();
+        getNewCommentNews();
     });
 
     function getBanner() {
@@ -274,7 +275,7 @@
                         var m = data.data[i];
                         var news;
                         news = '<article class="excerpt excerpt-1" style="">' +
-                            '<a class="focus" href="/News/Detail?id"'+m.id+'" title="'+m.title+'" target="_blank"><img class="thumb" data-original="'+m.image+'" src="'+m.image+'" alt="'+m.title+'" style="display: inline;"></a>' +
+                            '<a class="focus" href="/News/Detail?id='+m.id+'" title="'+m.title+'" target="_blank"><img class="thumb" data-original="'+m.image+'" src="'+m.image+'" alt="'+m.title+'" style="display: inline;"></a>' +
                             '<header>' +
                             '<h2>' +
                             '<a href="show.html" title="'+m.title+'" target="_blank">'+m.title+'</a>' +
@@ -287,6 +288,33 @@
                             '<p class="note">'+m.contents+'</p>' +
                             '</article>';
                         $("#home_news").append(news);
+                    }
+                    
+                } 
+            }
+        });
+    }
+
+    function getNewCommentNews() {
+        $.ajax({
+            type: 'get',
+            url: '/Home/GetNewCommentNews',
+            success: function(data) {
+                if (data.code === 200) {
+                    $("#new_comment").empty();
+                    for (var i = 0; i < data.data.length; i++) {
+                        var m = data.data[i];
+                        var news;
+                        news = '<li>' +
+                            '<a title="'+m.title+'" href="/News/Detail?id='+m.id+'">' +
+                            '<span class="thumbnail">' +
+                            '<img class="thumb" data-original="'+m.title+'" src="'+m.image+'" alt="'+m.title+'" style="display: block;">' +
+                            '</span><span class="text">'+m.title+'</span><span class="muted"/>' +
+                            '<i class="glyphicon glyphicon-time"></i>' +
+                            m.publishDate+ 
+                            '</a>' +
+                            '</li>';
+                        $("#new_comment").append(news);
                     }
                     
                 } 

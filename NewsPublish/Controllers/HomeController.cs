@@ -49,7 +49,13 @@ namespace NewsPublish.Controllers
         [HttpGet]
         public JsonResult GetHomeNews()
         {
-            return Json(_newsService.GetNewsList(c => true, 5));
+            return Json(_newsService.GetNewsList(c => true, 4));
+        }
+
+        [HttpGet]
+        public JsonResult GetNewCommentNews()
+        {
+            return Json(_newsService.GetNewCommentNewsList(c => true, 5));
         }
         public IActionResult Contact()
         {
@@ -58,15 +64,5 @@ namespace NewsPublish.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }
