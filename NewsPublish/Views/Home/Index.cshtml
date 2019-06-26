@@ -12,7 +12,7 @@
 	  <li data-target="#focusslide" data-slide-to="0" class="active"></li>
 	  <li data-target="#focusslide" data-slide-to="1"></li>
 	</ol>
-	<div class="carousel-inner" role="listbox">
+	<div class="carousel-inner" id="carousel-inner" role="listbox">
 	  @* <div class="item active"> *@
 	  @* <a href="#" target="_blank"> *@
 	  @* <img src="images//201610181557196870.jpg" class="img-responsive"></a> *@
@@ -106,8 +106,8 @@
 	</ul>
 	<div class="tab-content">
 	  <div role="tabpanel" class="tab-pane contact active" id="notice">
-		<h2>新闻总数:
-			  888篇
+		<h2>
+            <text id="total_news"></text>
 		  </h2>
 		  <h2>网站运行:
 		  <span id="sitetime">5年以上 </span></h2>
@@ -201,18 +201,18 @@
 <script type="text/javascript">
     $(function() {
         getBanner();
+        getTotalNews();
     });
 
     function getBanner() {
         $.ajax({
             type: 'get',
-            async: true,
             url: '/Home/GetBanner',
-            data: {pageIndex:pageIndex,pageSize:pageSize,classifyId:classifyId,keyword:keyword},
             success: function(data) {
                 if (data.code === 200) {
-                    $(".carousel-inner").empty();
-                    for (var i = 0; i < data.length; i++) {
+                    //alert(data.data.length);
+                    $("#carousel-inner").empty();
+                    for (var i = 0; i < data.data.length; i++) {
                         var m = data.data[i];
                         var banner;
                         if (i === 0) {
@@ -222,11 +222,28 @@
                                 '</div>';
                         } else {
                             banner = '<div class="item">' +
-                                '<a href="'+m.url+'" target="_blank" ><img src="'+m.image+'" class="img-responsive"></a>' +
-                                '</div>'
+                                '<a href="' +
+                                m.url +
+                                '" target="_blank" ><img src="' +
+                                m.image +
+                                '" class="img-responsive"></a>' +
+                                '</div>';
                         }
-
+                        $("#carousel-inner").append(banner);
                     }
+                } 
+            }
+        });
+    }
+
+   // total_news
+    function getTotalNews() {
+        $.ajax({
+            type: 'get',
+            url: '/Home/GetTotalNews',
+            success: function(data) {
+                if (data.code === 200) {
+                    $("#total_news").text("新闻总数："+data.data + " 篇");
                 } 
             }
         });

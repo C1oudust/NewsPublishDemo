@@ -35,7 +35,14 @@ namespace NewsPublish.Controllers
         [HttpGet]
         public JsonResult GetBanner()
         {
-            return Json(_bannerService.GetBannerList());
+            var bannerList = _bannerService.GetBannerList();
+            return Json(bannerList);
+        }
+
+        [HttpGet]
+        public JsonResult GetTotalNews()
+        {
+            return Json(_newsService.GetNewsCount(c => true));
         }
         public IActionResult Contact()
         {
