@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NewsPublish.Model.Response;
 using NewsPublish.Models;
 using NewsPublish.Service;
 using Newtonsoft.Json.Schema;
@@ -33,6 +34,12 @@ namespace NewsPublish.Controllers
             return View();
         }
 
+        public IActionResult Wrong()
+        {
+            ViewData["Title"] = "404";
+            return View(_newsService.GetNewsClassifyList());
+    }
+
         [HttpGet]
         public JsonResult GetBanner()
         {
@@ -56,6 +63,17 @@ namespace NewsPublish.Controllers
         public JsonResult GetNewCommentNews()
         {
             return Json(_newsService.GetNewCommentNewsList(c => true, 5));
+        }
+
+        [HttpGet]
+        public JsonResult SearchNews(string keyword)
+        {
+            if (string.IsNullOrEmpty(keyword))
+            {
+                return Json(new ResponseModel { code = 0, result = "null search words!" });
+            }
+
+            return Json(_newsService.SearchOneNews(c => c.Title.Contains(keyword)));
         }
         public IActionResult Contact()
         {
