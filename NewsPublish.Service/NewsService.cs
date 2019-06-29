@@ -273,6 +273,7 @@ namespace NewsPublish.Service
                 .Include("NewsClassify")
                 .Include("NewsComment")
                 .Where(c => newsId.Contains(c.Id))
+                .Where(where)
                 .OrderByDescending(c => c.PublishDate);
             var response = new ResponseModel
             {
@@ -298,7 +299,44 @@ namespace NewsPublish.Service
 
             return response;
         }
+        public ResponseModel GetNewCommentNewsList(Expression<Func<News, bool>> where)
+        {
+            var newsList = _db.NewsComment
+                .OrderByDescending(c => c.AddTime)
+                .GroupBy(c => c.NewsId)
+                .Select(c => c.Key);
+            var count = newsList.Count() > 3 ? 3: newsList.Count();
+            var newsId =newsList.Take(count);
+            var list = _db.News
+                .Include("NewsClassify")
+                .Include("NewsComment")
+                .Where(c => newsId.Contains(c.Id))
+                .Where(where)
+                .OrderByDescending(c => c.PublishDate);
+            var response = new ResponseModel
+            {
+                code = 200,
+                result = "Get News Comment success!",
+                data = new List<NewsModel>()
+            };
+            foreach (var news in list)
+            {
+                response.data.Add(new NewsModel
+                {
+                    Id = news.Id,
+                    PublishDate = Convert.ToDateTime(news.PublishDate).ToString("yyyy-MM-dd"),
+                    Title = news.Title,
+                    Contents = news.Contents.Length > 50 ? news.Contents.Substring(0, 50) : news.Contents,
+                    Image = news.Image,
+                    Remark = news.Remark,
+                    ClassifyName = news.NewsClassify.Name,
+                    CommentCount = news.NewsComment.Count()
 
+                });
+            }
+
+            return response;
+        }
         public ResponseModel SearchOneNews(Expression<Func<News, bool>> where)
         {
             var news = _db.News
@@ -327,7 +365,19 @@ namespace NewsPublish.Service
             };
 
         }
-
+        public ResponseModel GetNewsCommentCount(Expression<Func<NewsComment, bool>> where)
+        {
+            var count = _db.NewsComment
+                .Where(where)
+                .GroupBy(c => c.NewsId)
+                .Count();
+            return new ResponseModel
+            {
+                code = 200,
+                result = "Get news comment count success!",
+                data = count
+            };
+        }
         /// <summary>
         /// 根据当然文章类型获取相关类型的文章以作推荐
         /// </summary>
