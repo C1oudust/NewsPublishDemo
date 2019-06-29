@@ -398,7 +398,7 @@ namespace NewsPublish.Service
                 .Where(c => c.NewsClassifyId == news.NewsClassifyId && c.Id != id)
                 .OrderByDescending(c => c.PublishDate)
                 .ThenByDescending(c => c.NewsComment.Count)
-                .Take(6)
+                .Take(2)
                 .ToList();
             var response = new ResponseModel
             {

@@ -11,10 +11,12 @@ namespace NewsPublish.Controllers
     public class NewsController : Controller
     {   
         private NewsService _newsService;
+        private CommentService _commentService;
 
-        public NewsController(NewsService newsService)
+        public NewsController(NewsService newsService,CommentService commentService)
         {
             _newsService = newsService;
+            _commentService = commentService;
         }
         public IActionResult Classify(int id)
         {   
@@ -25,7 +27,7 @@ namespace NewsPublish.Controllers
             ViewData["NewsList"] = new ResponseModel();
             ViewData["NewCommentNews"] = new ResponseModel();
             ViewData["Title"] = "首页";
-            if (classify.code <= 0)
+            if (classify.code == 0)
             {
                 
                 Response.Redirect("Home/Index");
@@ -42,6 +44,33 @@ namespace NewsPublish.Controllers
                 ViewData["Title"] = classify.data.Name;
             }
             
+            return View(_newsService.GetNewsClassifyList());
+        }
+
+        public IActionResult Detail(int id)
+        {
+            ViewData["Title"] = "详情";
+            if (id < 0)
+                Response.Redirect("Home/Index");
+            var news = _newsService.GetOneNews(id);
+            var classify = _newsService.GetOneNewsClassify(id);
+            ViewData["News"] = new ResponseModel();
+            ViewData["RelevantNews"] = new ResponseModel();
+            ViewData["Comments"] = new ResponseModel();
+            if (news.code == 0)
+            {
+                Response.Redirect("Home/Index");
+            }
+            else
+            {
+                ViewData["Title"] = news.data.Title;
+                ViewData["News"] = news;
+                var relevantNews = _newsService.GetRelevantNews(id);
+                ViewData["RelevantNews"] = relevantNews;
+                var comments = _commentService.GetCommentList(c => c.NewsId == id);
+                ViewData["Comments"] = comments;
+            }
+
             return View(_newsService.GetNewsClassifyList());
         }
     }
