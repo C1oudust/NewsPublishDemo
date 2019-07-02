@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NewsPublish.Model.Request;
 using NewsPublish.Model.Response;
 using NewsPublish.Service;
 
@@ -72,6 +73,22 @@ namespace NewsPublish.Controllers
             }
 
             return View(_newsService.GetNewsClassifyList());
+        }
+
+        [HttpPost]
+        public JsonResult AddComment(AddComment comment)
+        {
+            if (comment.NewsId == 0)
+            {
+                return Json(new ResponseModel {code = 0, result = "News can't find!"});
+            }
+
+            if (string.IsNullOrEmpty(comment.Contents))
+            {
+                return Json(new ResponseModel { code = 0, result = "Content is null!" });
+            }
+
+            return Json(_commentService.AddComment(comment));
         }
     }
 }

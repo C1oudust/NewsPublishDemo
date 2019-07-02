@@ -23,7 +23,7 @@ namespace NewsPublish.Service
 
         public ResponseModel AddComment(AddComment comment)
         {
-            var news = _newsService.GetOneNews(comment.Id);
+            var news = _newsService.GetOneNews(comment.NewsId);
             if (news.code == 0)
             {
                 return new ResponseModel { code = 0, result = "News inexistence!" };
