@@ -103,7 +103,6 @@
             url: '/Home/GetBanner',
             success: function(data) {
                 if (data.code === 200) {
-                    //alert(data.data.length);
                     $("#carousel-inner").empty();
                     for (var i = 0; i < data.data.length; i++) {
                         var m = data.data[i];
@@ -182,8 +181,7 @@
                     $("#new_comment").empty();
                     for (var i = 0; i < data.data.length; i++) {
                         var m = data.data[i];
-                        var news;
-                        news = '<li>' +
+                        var news = '<li>' +
                             '<a title="'+m.title+'" href="/News/Detail?id='+m.id+'">' +
                             '<span class="thumbnail">' +
                             '<img class="thumb" data-original="'+m.title+'" src="'+m.image+'" alt="'+m.title+'" style="display: block;">' +
